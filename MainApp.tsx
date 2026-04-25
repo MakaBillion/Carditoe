@@ -1,18 +1,18 @@
-
 import React, { useState } from 'react';
-import { AppTab, Transaction, User, Store, ShoppingListItem, SavedList, Product } from '../types';
-import Dashboard from './Dashboard';
-import WalletView from './WalletView';
-import ReceiptAssistant from './ReceiptAssistant';
-import StoreDetail from './StoreDetail';
-import BuyStore from './BuyStore';
-import LinkPhysicalCard from './LinkPhysicalCard';
-import GroceryAssistant from './GroceryAssistant';
-import ProfileView from './ProfileView';
-import Login from './Login';
-import DigitalReceipt from './DigitalReceipt';
-import MerchantTerminal from '../micoin-sdk/merchant/MerchantTerminal';
 import { Home, CreditCard, MessageSquare, History, Menu, Bell, Moon, Sun, ArrowLeft, ArrowUpRight, ShoppingBasket, AlertTriangle, ChevronRight, Zap, Sparkles } from 'lucide-react';
+
+// --- TYPES SECTION ---
+export enum AppTab {
+  LOGIN, DASHBOARD, WALLET, HISTORY, GROCERY_LIST, ASSISTANT, STORE_VIEW, BUY, LINK_CARD, PROFILE, MERCHANT_TERMINAL
+}
+export interface User { id: string; name: string; memberId: string; miCoinBalance: number; totalSaved: number; roundUpTarget: number; isAutoSaveEnabled: boolean; isSaveAllChangeEnabled: boolean; }
+export interface Product { id: string; name: string; price: number; oldPrice?: number; inStock: boolean; category: string; image: string; carditoeCashback?: number; storeCashback?: number; isCarditoeOriginal?: boolean; promoDescription?: string; discount?: string; }
+export interface Store { id: string; name: string; type: string; color: string; logo: string; isLinked: boolean; loyaltyPoints: number; pointsExpiring?: number; notificationCount: number; tabAlerts: any; promos: Product[]; inventory: Product[]; branches: any[]; }
+export interface Transaction { id: string; storeId: string; store: string; amount: number; roundedAmount?: number; savings: number; date: string; category: string; items?: string[]; type: 'ROUND_UP' | 'CASHOUT' | 'DEPOSIT'; receiptData?: any; }
+export interface ShoppingListItem extends Product { storeId: string; storeName: string; quantity: number; }
+export interface SavedList { id: string; name: string; date: string; items: ShoppingListItem[]; total: number; totalSavings: number; }
+import { Home, CreditCard, MessageSquare, History, Menu, Bell, Moon, Sun, ArrowLeft, ArrowUpRight, ShoppingBasket, AlertTriangle, ChevronRight, Zap, Sparkles } from 'lucide-react';
+
 
 const MOCK_USER: User = {
   id: "user_123",
@@ -178,7 +178,18 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
       }
   }
 ];
-
+// --- PLACEHOLDER COMPONENTS ---
+const Login = ({ onLogin }: any) => <div className="p-10 text-center"><button onClick={onLogin} className="bg-brand-600 text-white p-4 rounded-xl">Login to CarditOe'</button></div>;
+const Dashboard = ({ user, onStoreClick }: any) => <div className="p-5"><h1>Welcome, {user.name}</h1><p>Your Balance: R{user.miCoinBalance}</p><button onClick={() => onStoreClick(INITIAL_STORES[0])} className="mt-4 p-4 bg-white border rounded-xl">View Pick n Pay</button></div>;
+const WalletView = () => <div className="p-5">Wallet Details Coming Soon</div>;
+const StoreDetail = ({ store, onBack }: any) => <div className="p-5"><button onClick={onBack}>Back</button><h1>{store.name} Inventory</h1>{store.inventory.map((i: any) => <div key={i.id}>{i.name} - R{i.price}</div>)}</div>;
+const GroceryAssistant = () => <div className="p-5">Smart Grocery List & Budgeting Engine</div>;
+const ReceiptAssistant = () => <div className="p-5">Receipt Scanning Assistant</div>;
+const ProfileView = () => <div className="p-5">User Profile</div>;
+const DigitalReceipt = () => <div className="p-5">Digital Slip</div>;
+const LinkPhysicalCard = () => <div className="p-5">Link Store Card</div>;
+const BuyStore = () => <div className="p-5">Buy Items</div>;
+const MerchantTerminal = () => <div className="p-5">Merchant Terminal</div>;
 const MainApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.LOGIN);
   const [isDarkMode, setIsDarkMode] = useState(false);
